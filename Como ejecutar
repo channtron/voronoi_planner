@@ -1,6 +1,0 @@
-MODELO EN 2D
-1. roscore
-2. roscd planner
-3. rosrun stage_ros stageros worlds/simulation.world
-4. rosrun voronoi_planner go_to_goal.py
-5. rosrun voronoi_planner voronoi2D.py
