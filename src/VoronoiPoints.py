@@ -113,5 +113,6 @@ def voronoi(path):
 
 
 if __name__ == "__main__":
-    path = 'map.csv'
+    path = '/home/martalopez/catkin_ws/src/voronoi_planner/worlds/Plano/Altura1.csv'
+    #path = 'map.csv'
     puntos = voronoi(path)
