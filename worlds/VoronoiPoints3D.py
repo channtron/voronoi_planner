@@ -109,16 +109,15 @@ def Voronoi3D(map):
                         p_voronoi.append([z, i, j])
                         w_map[z, i, j] = 2;
 
-    for z in range(0, Z - 1):
-        fig = plt.figure()
-        ax = fig.gca(projection='3d')
-        ax.voxels(map[z:z+1][:][:], facecolors='blue', edgecolor='k')
 
-        for point in p_voronoi:
-            if point[0] == z:
-                ax.scatter(point[0], point[1], point[2])
-                # print(point[0], point[1], point[2])
-        plt.show()
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    ax.voxels(map[1:Z-2][:][:], facecolors='blue', edgecolor='k')
+
+    for point in p_voronoi:
+        ax.scatter(point[0], point[1], point[2])
+        # print(point[0], point[1], point[2])
+    plt.show()
 
     return p_voronoi
 
