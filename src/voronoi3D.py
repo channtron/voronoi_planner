@@ -73,7 +73,7 @@ class Planner:
         n_map = VoronoiPoints3D.GenerateMap()
 
         ######################
-        # TODO: Implement A* # CON CUIDADO, ESTA SEGUN LAS COORDENADAS DEL CSV (0,0) ARRIBA A LA IZQUIERDA Y CON FORMATO (Y,X)
+        # TODO: Implementar algoritmo
         ######################
         lista_abierta = []
         lista_cerrada = []
@@ -146,21 +146,50 @@ class Planner:
 
             # Si no es el final calculamos las celdas vecinas, comprobamos si esta en la lista o hay obstaculo y repetimos el bucle
             else:
-                # Calculamos celdas vecinas que pertenezcan a celdas de voronoi
+                # Calculamos celdas vecinas a una distancia r que pertenezcan a celdas de voronoi
+                r = 2
                 celdas_vecinas=[]
-                for celdas in celdas_voronoi:
-                    if abs(celdas.x - celda_actual.x) <= 1 and abs(celdas.y - celda_actual.y) <= 1 and abs(celdas.z - celda_actual.z) <= 1:
-                        celda_aux_2 = celda(celdas.x, celdas.y, celdas.z, start_cell, goal_cell, celda_actual, heur)
-                        celdas_vecinas.append(celda_aux_2)
+                atraviesa_pared = 0
 
-                # path.append([celda_actual.x, celda_actual.y])
+                for celdas in celdas_voronoi:
+                    dist_x = celdas.x - celda_actual.x
+                    dist_y = celdas.y - celda_actual.y
+                    dist_z = celdas.z - celda_actual.z
+
+                    if dist_x >= 0:
+                        sign_x = 1
+                    else:
+                        sign_x = -1
+
+                    if dist_y >= 0:
+                        sign_y = 1
+                    else:
+                        sign_y = -1
+
+                    if dist_z >= 0:
+                        sign_z = 1
+                    else:
+                        sign_z = -1
+
+                    if abs(dist_x) <= r and abs(dist_y) <= r and abs(dist_z) <= r:
+
+                        # Comprobamos que entre la celda vecina y la actual no hay obstaculos
+                        for z in range(0, dist_z, sign_z):
+                            for x in range(0, dist_x, sign_x):
+                                for y in range(0, dist_y, sign_y):
+                                    if self.map[celda_actual.z + z, celda_actual.y + y, celda_actual.x + x] == 1.0:
+                                        atraviesa_pared = 1
+
+                        if atraviesa_pared == 0:
+                            celda_aux_2 = celda(celdas.x, celdas.y, celdas.z, start_cell, goal_cell, celda_actual, heur)
+                            celdas_vecinas.append(celda_aux_2)
 
                 iteraciones = iteraciones + 1
 
                 for vecino in celdas_vecinas:
 
                     # Si el vecino no es un obstaculo
-                    if self.map[vecino.z, vecino.y, vecino.z] != 1.0: # TODO
+                    if self.map[vecino.z, vecino.y, vecino.x] != 1.0: # TODO
 
                         # Si ya estaba en la lista abierta o cerrada
                         for elemento in lista_abierta:
@@ -183,12 +212,12 @@ class Planner:
                         en_lista = False
 
             # En caso de fallo, no hace infinitas iteraciones
-            if iteraciones > 100:
+            if iteraciones > 400:
                 print("Mas de 100 iteraciones, algo ha fallado :(")
                 fin = True
 
         ######################
-        # End A*             #
+        # End Algoritmo            #
         ######################
 
         # Print path
@@ -236,8 +265,8 @@ class Planner:
         #current_cell = [self.pose.y, self.pose.x]
         # current_cell = [start_cell_y, start_cell_x, start_cell_z]
         # goal_cell = [goal_pose_y, goal_pose_x, goal_pose_z]
-        current_cell = [3, 5, 2]
-        goal_cell = [12, 5, 4]
+        current_cell = [10, 5, 4]
+        goal_cell = [5, 25, 6]
         #goal_cell = [17, 4, 6]
         path = self.compute_path(current_cell, goal_cell, heur)
 
