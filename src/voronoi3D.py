@@ -132,7 +132,7 @@ class Planner:
                 path.append([round(goal_cell[1]), round(goal_cell[0]), round(goal_cell[2])])
                 path.append([celda_actual.x, celda_actual.y, celda_actual.z])
                 celda_padre = celda_actual.parent
-                if celda_padre is not None: # Si el destino está a una casilla del origen, sin esto daria fallo
+                if celda_padre is not None: # Si el destino esta a una casilla del origen, sin esto daria fallo
                     while celda_padre.parent is not None:
                         path.append([celda_padre.x, celda_padre.y, celda_actual.z])
                         celda_padre = celda_padre.parent
@@ -147,7 +147,7 @@ class Planner:
             # Si no es el final calculamos las celdas vecinas, comprobamos si esta en la lista o hay obstaculo y repetimos el bucle
             else:
                 # Calculamos celdas vecinas a una distancia r que pertenezcan a celdas de voronoi
-                r = 2
+                r = 6
                 celdas_vecinas=[]
                 atraviesa_pared = 0
 
@@ -174,10 +174,10 @@ class Planner:
                     if abs(dist_x) <= r and abs(dist_y) <= r and abs(dist_z) <= r:
 
                         # Comprobamos que entre la celda vecina y la actual no hay obstaculos
-                        for z in range(0, dist_z, sign_z):
-                            for x in range(0, dist_x, sign_x):
-                                for y in range(0, dist_y, sign_y):
-                                    if self.map[celda_actual.z + z, celda_actual.y + y, celda_actual.x + x] == 1.0:
+                        for z in range(0, int( dist_z), sign_z):
+                            for x in range(0, int(dist_x), sign_x):
+                                for y in range(0, int(dist_y), sign_y):
+                                    if self.map[int(celda_actual.z) + z, int(celda_actual.y) + y, int(celda_actual.x) + x] == 1.0:
                                         atraviesa_pared = 1
 
                         if atraviesa_pared == 0:
@@ -189,7 +189,7 @@ class Planner:
                 for vecino in celdas_vecinas:
 
                     # Si el vecino no es un obstaculo
-                    if self.map[vecino.z, vecino.y, vecino.x] != 1.0: # TODO
+                    if self.map[int(vecino.z), int(vecino.y), int(vecino.x)] != 1: # TODO
 
                         # Si ya estaba en la lista abierta o cerrada
                         for elemento in lista_abierta:
