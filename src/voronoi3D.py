@@ -8,6 +8,7 @@ import VoronoiPoints3D
 import numpy as np
 import matplotlib.pyplot as plt
 from math import pow, sqrt
+import copy
 
 # Creamos una nueva clase celda, que contenga las coordenadas,
 # los valores de G, H y F, un puntero a la celda padre
@@ -19,10 +20,10 @@ class celda:
         self.x = round(x, 0)
         self.y = round(y, 0)
         if heur == 0:  # Heuristica = distancia Manhattan
-            self.g = abs(round(start_cell[1], 0) - self.x) + abs(
-                round(start_cell[0], 0) - self.y) + abs(round(start_cell[2], 0) - self.z)  # Distancia Manhattan al origen
-            self.h = abs(round(goal_cell[1], 0) - self.x) + abs(
-                round(goal_cell[0], 0) - self.y) + abs(round(goal_cell[2], 0) - self.z) # Distancia Manhattan al destino
+            self.g = abs(round(start_cell[1], 0) - self.x) + abs(round(start_cell[0], 0) - self.y) \
+                     + abs(round(start_cell[2], 0) - self.z)  # Distancia Manhattan al origen
+            self.h = abs(round(goal_cell[1], 0) - self.x) + abs(round(goal_cell[0], 0) - self.y) \
+                     + abs(round(goal_cell[2], 0) - self.z) # Distancia Manhattan al destino
 
         elif heur == 1:  # Heuristica = distancia Euclidea
             self.g = sqrt(pow((start_cell[1] - self.x), 2) + pow((start_cell[0] - self.y), 2) + pow((start_cell[2] - self.z), 2)) # Distancia euclidea al origen
@@ -70,7 +71,7 @@ class Planner:
 
         path = []
         w_map = self.map
-        n_map = VoronoiPoints3D.GenerateMap()
+        n_map = copy.deepcopy(self.map)
 
         ######################
         # TODO: Implementar algoritmo
@@ -147,7 +148,7 @@ class Planner:
             # Si no es el final calculamos las celdas vecinas, comprobamos si esta en la lista o hay obstaculo y repetimos el bucle
             else:
                 # Calculamos celdas vecinas a una distancia r que pertenezcan a celdas de voronoi
-                r = 6
+                r = 3
                 celdas_vecinas=[]
                 atraviesa_pared = 0
 
@@ -174,10 +175,10 @@ class Planner:
                     if abs(dist_x) <= r and abs(dist_y) <= r and abs(dist_z) <= r:
 
                         # Comprobamos que entre la celda vecina y la actual no hay obstaculos
-                        for z in range(0, int( dist_z), sign_z):
-                            for x in range(0, int(dist_x), sign_x):
-                                for y in range(0, int(dist_y), sign_y):
-                                    if self.map[int(celda_actual.z) + z, int(celda_actual.y) + y, int(celda_actual.x) + x] == 1.0:
+                        for z in range(0, dist_z, sign_z):
+                            for x in range(0, dist_x, sign_x):
+                                for y in range(0, dist_y, sign_y):
+                                    if self.map[celda_actual.z + z, celda_actual.y + y, celda_actual.x + x] == 1.0:
                                         atraviesa_pared = 1
 
                         if atraviesa_pared == 0:
@@ -212,7 +213,7 @@ class Planner:
                         en_lista = False
 
             # En caso de fallo, no hace infinitas iteraciones
-            if iteraciones > 400:
+            if iteraciones > 600:
                 print("Mas de 100 iteraciones, algo ha fallado :(")
                 fin = True
 
@@ -257,7 +258,7 @@ class Planner:
         # goal_pose_z = int(input("Set your z goal: "))
         # tolerance = input("Set the tolerance: ")
         # heur = int(input(" 0 = distancia Manhattan \n 1 = distancia Euclidea \n Introduce 0 o 1:"))
-        heur = 0
+        heur = 1
         # Compute current and goal cell
         # TODO: compute automatically
 
@@ -265,8 +266,8 @@ class Planner:
         #current_cell = [self.pose.y, self.pose.x]
         # current_cell = [start_cell_y, start_cell_x, start_cell_z]
         # goal_cell = [goal_pose_y, goal_pose_x, goal_pose_z]
-        current_cell = [10, 5, 4]
-        goal_cell = [5, 25, 6]
+        current_cell = [10, 20, 4]
+        goal_cell = [3, 2, 7]
         #goal_cell = [17, 4, 6]
         path = self.compute_path(current_cell, goal_cell, heur)
 

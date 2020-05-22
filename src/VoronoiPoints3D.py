@@ -7,19 +7,18 @@ import copy
 
 def GenerateMap():
     # Cargamos los mapas de las distintas alturas
-
-    suelo = np.genfromtxt('worlds/Plano/suelo + techo.csv', delimiter=',')
+    suelo = np.genfromtxt('/home/martalopez/catkin_ws/src/voronoi_planner/worlds/Plano/suelo + techo.csv', delimiter=',')
     M = suelo.shape[0]
     N = suelo.shape[1]
     image_suelo = np.flipud(suelo)
 
-    alt1 = np.genfromtxt('worlds/Plano/Altura1.csv', delimiter=',')
+    alt1 = np.genfromtxt('/home/martalopez/catkin_ws/src/voronoi_planner/worlds/Plano/Altura1.csv', delimiter=',')
     image_alt1 = np.flipud(alt1)
 
-    alt3 = np.genfromtxt('worlds/Plano/Altura3.csv', delimiter=',')
+    alt3 = np.genfromtxt('/home/martalopez/catkin_ws/src/voronoi_planner/worlds/Plano/Altura3.csv', delimiter=',')
     image_alt3 = np.flipud(alt3)
 
-    alt4_5 = np.genfromtxt('worlds/Plano/Altura4,5.csv', delimiter=',')
+    alt4_5 = np.genfromtxt('/home/martalopez/catkin_ws/src/voronoi_planner/worlds/Plano/Altura4,5.csv', delimiter=',')
     image_alt4_5 = np.flipud(alt4_5)
 
     Z=11
@@ -66,7 +65,11 @@ def Voronoi3D(map):
                 
                 if w_map[z, i, j] == 0:
                     None
-                    if not (w_map[z-1, i, j] == 1 or w_map[z+1, i, j] == 1 or w_map[z, i-1, j] == 1 or w_map[z, i+1, j] == 1 or w_map[z, i, j-1] == 1 or w_map[z, i, j+1] == 1):
+                    if not (w_map[z-1, i, j] == 1 or w_map[z+1, i, j] == 1 or w_map[z, i-1, j] == 1 or
+                            w_map[z, i+1, j] == 1 or w_map[z, i, j-1] == 1 or w_map[z, i, j+1] == 1 or
+                            w_map[z, i+1, j-1] == 1 or w_map[z, i+1, j+1] == 1 or w_map[z, i-1, j+1] == 1
+                            or w_map[z, i-1, j-1] == 1):
+
                         dist_obs = [0, 0, 0, 0, 0, 0]
 
                         # Miramos los vecinos hacia la derecha
@@ -108,7 +111,7 @@ def Voronoi3D(map):
                         cont = 0
                         d_min = min(dist_obs)
                         for w in dist_obs:
-                            if w == d_min:
+                            if w == d_min or w == d_min+1:
                                 cont = cont + 1
 
                         if cont >= 3:
@@ -119,10 +122,10 @@ def Voronoi3D(map):
     # fig = plt.figure()
     # ax = fig.gca(projection='3d')
     # ax.voxels(map[1:Z-2][:][:], facecolors='blue', edgecolor='k')
-
+    #
     # for point in p_voronoi:
     #     ax.scatter(point[0], point[1], point[2])
-    #     # print(point[0], point[1], point[2])
+        # print(point[0], point[1], point[2])
     # plt.show()
 
     return p_voronoi
