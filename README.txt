@@ -10,3 +10,9 @@ MODELO EN 2D
 3. rosrun stage_ros stageros worlds/simulation.world
 4. rosrun voronoi_planner go_to_goal.py
 5. rosrun voronoi_planner voronoi2D.py
+
+
+MODELO EN 3D
+1. roslaunch ual_backend_gazebo_light simulation.launch (lanza roscore y gazebo con el dron)
+2. rosrun gazebo_ros spawn_model -file ~/catkin_ws/src/voronoi_planner/worlds/Plano/model.sdf -sdf -x 0 -y 0 -z 0 -model Plano
+(lanza el mapa y lo coloca en el (0,0,0)
