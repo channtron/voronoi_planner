@@ -161,7 +161,7 @@ class Planner:
                 for vecino in celdas_vecinas:
 
                     # Si el vecino no es un obstaculo
-                    if self.map[vecino.y, vecino.x] == 0.0: # TODO
+                    if self.map[vecino.y, vecino.x] == 0.0:
 
                         # Si ya estaba en la lista abierta o cerrada
                         for elemento in lista_abierta:
