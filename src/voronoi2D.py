@@ -8,6 +8,7 @@ import VoronoiPoints
 import numpy as np
 import matplotlib.pyplot as plt
 from math import pow, sqrt
+import copy
 
 # Creamos una nueva clase celda, que contenga las coordenadas,
 # los valores de G, H y F, un puntero a la celda padre
@@ -90,13 +91,13 @@ class Planner:
         # lista_abierta.append(inicio)
 
         # Calculamos los puntos de voronoi
-        voronoi_points = VoronoiPoints.voronoi('/home/martalopez/catkin_ws/src/planner/worlds/map2.csv')
+        voronoi_points = VoronoiPoints.voronoi('worlds/map_coloreado.csv')
 
         celdas_voronoi=[]
         # Los hacemos objetos de clase celda y los guardamos en una lista
         for point in voronoi_points:
             celda_aux = celda(point[1], point[0], start_cell, goal_cell, None, heur)
-            celdas_voronoi.append(celda_aux)
+            celdas_voronoi.append(copy.deepcopy(celda_aux))
 
         # Obtenemos la celda de voronoi mas cercana al origen y al final
 
@@ -121,9 +122,8 @@ class Planner:
             lista_abierta.sort(key=lambda aux: aux.f, reverse=False)
 
             # Sacamos el primer elemento de la lista abierta y lo introducimos en la cerrada
-            lista_cerrada.append(lista_abierta[0])
-            celda_actual = lista_abierta[0]
-            lista_abierta.remove(celda_actual)
+            celda_actual = lista_abierta.pop(0)
+            lista_cerrada.append(copy.deepcopy(celda_actual))
 
             # path.append([celda_actual.x, celda_actual.y])
 
@@ -152,7 +152,7 @@ class Planner:
                 for celdas in celdas_voronoi:
                     if abs(celdas.x - celda_actual.x) <= 1 and abs(celdas.y - celda_actual.y) <= 1:
                         celda_aux_2 = celda(celdas.x, celdas.y, start_cell, goal_cell, celda_actual, heur)
-                        celdas_vecinas.append(celda_aux_2)
+                        celdas_vecinas.append(copy.deepcopy(celda_aux_2))
 
                 # path.append([celda_actual.x, celda_actual.y])
 
@@ -160,39 +160,47 @@ class Planner:
 
                 for vecino in celdas_vecinas:
 
+                    en_lista = False
                     # Si el vecino no es un obstaculo
-                    if self.map[vecino.y, vecino.x] == 0.0: # TODO
-
+                    if self.map[int(vecino.y), int(vecino.x)] == 0.0: #
+                        
                         # Si ya estaba en la lista abierta o cerrada
-                        for elemento in lista_abierta:
+                        for i,  elemento in enumerate(lista_abierta):
                             if elemento.x == vecino.x and elemento.y == vecino.y:
                                 en_lista = True
                                 if vecino.g < elemento.g:  # Si la variable actual tiene mejor g que la ya almacenada
-                                    lista_abierta[elemento] = vecino
-
-                        for elemento in lista_cerrada:
-                            if elemento.x == vecino.x and elemento.y == vecino.y:
-                                en_lista = True
-                                if vecino.g < elemento.g:  # Si la variable actual tiene mejor g que la ya almacenada
-                                    lista_cerrada[elemento] = vecino
+                                    lista_abierta.pop(i)
+                                    lista_abierta.append(copy.deepcopy(vecino))
+                        
+                        if en_lista == False:
+                            for i, elemento in enumerate(lista_cerrada):
+                                if elemento.x == vecino.x and elemento.y == vecino.y:
+                                    en_lista = True
+                                    if vecino.g < elemento.g:  # Si la variable actual tiene mejor g que la ya almacenada
+                                        lista_cerrada.pop(i)
+                                        lista_cerrada.append(copy.deepcopy(vecino))
 
                         # Si no estaba en ninguna de las listas, se anade a la lista abierta
                         if en_lista == False:
-                            lista_abierta.append(vecino)
+                            lista_abierta.append(copy.deepcopy(vecino))
 
-                        lista_abierta.sort(key=lambda aux: aux.f, reverse=False)
-                        en_lista = False
+                lista_abierta.sort(key=lambda aux: aux.f, reverse=False)
 
-            # En caso de fallo, no hace infinitas iteraciones
-            if iteraciones > 100:
-                print("Mas de 100 iteraciones, algo ha fallado :(")
+            if len(lista_abierta) == 0:
+                print("No se ha encontrado un camino, algo ha fallado :(")
+                print("Se las siguientes iteraciones...", iteraciones)
                 fin = True
+            # En caso de fallo, no hace infinitas iteraciones
+            # if iteraciones > 100:
+            #     print("Mas de 100 iteraciones, algo ha fallado :(")
+            #     fin = True
 
         ######################
         # End A*             #
         ######################
 
         # Print path
+        print(path)
         x = []
         y = []
 
