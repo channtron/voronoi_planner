@@ -57,9 +57,9 @@ floorplan
 ( 
   name "Map"
   bitmap "map.png"
+  size [20.000 15.000 0.500]
   #bitmap "map2.png"
-  # size [20.000 15.000 0.500]
-  size [20.000 16.000 0.500]
+  # size [20.000 16.000 0.500]
   pose [ 0.00 0.000 0.000 0.000 ]
 )
 
