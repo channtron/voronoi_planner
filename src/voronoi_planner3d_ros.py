@@ -132,7 +132,7 @@ class Planner:
             # Si no es el final calculamos las celdas vecinas, comprobamos si esta en la lista o hay obstaculo y repetimos el bucle
             else:
                 # Calculamos celdas vecinas a una distancia r que pertenezcan a celdas de voronoi
-                r = 4
+                r = 5
                 celdas_vecinas = []
                 atraviesa_pared = 0
 
@@ -234,45 +234,65 @@ class Planner:
     def goto(self):
 
         current_cell = [10, 20, 1]
-        goal_cell = [4, 5, 7]
-        heur = 0
-        # goal_cell = [17, 4, 6]
-        path = self.compute_path(current_cell, goal_cell, heur)
+        print("-7, 4, 4 funciona bien")
 
-        # Hacemos la conversion de puntos del planificador a puntos del dron
-        # El planificador esta al doble de tamano para mas precision (hay que dividir entre 2)
-        for points in path:
-            points[0] = points[0]/2 - 10
-            points[1] = 5 - points[1]/2
-            points[2] = points[2]/2
-            print(points)
+        goal_cell_x = input("Set your x goal: ")
+        goal_cell_y = input("Set your y goal: ")
+        goal_cell_z = input("Set your z goal: ")
 
-        takeoff = rospy.ServiceProxy('ual/take_off', TakeOff)
-        ready = takeoff(0.5,1)
+        goal_cell=[2*(5 - goal_cell_y), 2*(goal_cell_x + 10), 2*(goal_cell_z - 0.5)]
 
-        for point in path:
+        while 1:
 
-            goto = rospy.ServiceProxy('ual/go_to_waypoint', GoToWaypoint)
-            waypoint = PoseStamped()
-            waypoint.header.seq = 0
-            waypoint.header.stamp.secs = 0
-            waypoint.header.stamp.nsecs = 0
-            waypoint.header.frame_id = ''
-            waypoint.pose.position.x = point[0]
-            waypoint.pose.position.y = point[1]
-            waypoint.pose.position.z = point[2]
-            waypoint.pose.orientation.x = 0
-            waypoint.pose.orientation.y = 0
-            waypoint.pose.orientation.z = 0
-            waypoint.pose.orientation.w = 0
+            heur = 0
 
-            #blocking = false
-            ready = goto( waypoint , 1 )
+            path = self.compute_path(current_cell, goal_cell, heur)
 
-        landing = rospy.ServiceProxy ('ual/land', Land)
-        ready = landing(1)
+            # Hacemos la conversion de puntos del planificador a puntos del dron
+            # El planificador esta al doble de tamano para mas precision (hay que dividir entre 2)
+            for points in path:
+                points[0] = points[0]/2 - 10 # Conversion x
+                points[1] = 5 - points[1]/2 # Conversion y
+                points[2] = points[2]/2 + 0.5 # Conversion z
+                print(points)
+
+            takeoff = rospy.ServiceProxy('ual/take_off', TakeOff)
+            ready = takeoff(0.5,1)
+
+            for point in path:
+
+                goto = rospy.ServiceProxy('ual/go_to_waypoint', GoToWaypoint)
+                waypoint = PoseStamped()
+                waypoint.header.seq = 0
+                waypoint.header.stamp.secs = 0
+                waypoint.header.stamp.nsecs = 0
+                waypoint.header.frame_id = ''
+                waypoint.pose.position.x = point[0]
+                waypoint.pose.position.y = point[1]
+                waypoint.pose.position.z = point[2]
+                waypoint.pose.orientation.x = 0
+                waypoint.pose.orientation.y = 0
+                waypoint.pose.orientation.z = 0
+                waypoint.pose.orientation.w = 0
+
+                #blocking = false
+                ready = goto( waypoint , 1 )
+
+            landing = rospy.ServiceProxy ('ual/land', Land)
+            ready = landing(1)
+
+            # La nueva celda actual sera la antigua celda final
+            current_cell = [goal_cell[0], goal_cell[1], 1]
+
+            # Proximo destino
+            goal_cell_x = input("Set your x goal: ")
+            goal_cell_y = input("Set your y goal: ")
+            goal_cell_z = input("Set your z goal: ")
+
+            goal_cell = [2 * (5 - goal_cell_y), 2 * (goal_cell_x + 10), 2 * (goal_cell_z - 0.5)]
 
 if __name__ == '__main__':
+
     try:
         rospy.init_node('Dron_goto', anonymous=True)
 
