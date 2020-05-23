@@ -56,6 +56,12 @@ def voronoi(path):
                     if w == d_min:
                         cont = cont + 1
 
+                # Para evitar errores en habitaciones pares
+                if cont < 2:
+                    for w in dist_obs:
+                        if w == d_min + 1:
+                            cont = cont + 1
+
                 if cont >= 2:
                     p_voronoi.append([i, j])
                     w_map[i, j] = 2;
