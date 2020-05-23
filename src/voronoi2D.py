@@ -59,10 +59,12 @@ class Planner:
         """Callback function which is called when a new message of type Pose is
         received by the subscriber."""
 
-        self.pose.x = round(data.pose.pose.position.x - 7.5, 4)
-        self.pose.y = round(data.pose.pose.position.y - 4.5, 4)
-        # self.pose.x = round(data.pose.pose.position.x - 8, 4)
-        # self.pose.y = round(data.pose.pose.position.y - 5, 4)
+        # para mellodic
+        self.pose.x = round(data.pose.pose.position.x, 4)
+        self.pose.y = round(data.pose.pose.position.y, 4)
+        # para kinetic
+        # self.pose.x = round(data.pose.pose.position.x - 7.5, 4)
+        # self.pose.y = round(data.pose.pose.position.y - 4.5, 4)
 
         orientation = [data.pose.pose.orientation.x, data.pose.pose.orientation.y, data.pose.pose.orientation.z,
                        data.pose.pose.orientation.w]
@@ -90,7 +92,7 @@ class Planner:
         # lista_abierta.append(inicio)
 
         # Calculamos los puntos de voronoi
-        voronoi_points = VoronoiPoints.voronoi('/home/martalopez/catkin_ws/src/planner/worlds/map2.csv')
+        voronoi_points = VoronoiPoints.voronoi('worlds/map2.csv')
 
         celdas_voronoi=[]
         # Los hacemos objetos de clase celda y los guardamos en una lista
@@ -161,7 +163,7 @@ class Planner:
                 for vecino in celdas_vecinas:
 
                     # Si el vecino no es un obstaculo
-                    if self.map[vecino.y, vecino.x] == 0.0:
+                    if self.map[int(vecino.y), int(vecino.x)] == 0.0:
 
                         # Si ya estaba en la lista abierta o cerrada
                         for elemento in lista_abierta:
@@ -225,7 +227,7 @@ class Planner:
         """ La transformacion a metros es X + 10 / 8 - Y	"""
 
         current_cell = [8.5 - self.pose.y, self.pose.x + 10]
-        goal_cell = [8.5 - goal_pose.y, goal_pose.x + 10]
+        goal_cell = [8.5 - goal_pose_y, goal_pose_x + 10]
 
         path = self.compute_path(current_cell, goal_cell, heur)
 
@@ -233,7 +235,7 @@ class Planner:
             # TODO: Call service GoTo
             """rospy.wait_for_service('goto')"""
             fn = rospy.ServiceProxy('goto', GoTo)
-            answ = fn(point[0] - 10, 8 - point[1], tolerance)  # Rehacemos el cambio de coordenadas
+            answ = fn(point[0] - 9.5, 7.5 - point[1], tolerance)  # Rehacemos el cambio de coordenadas
             pass
 
 
