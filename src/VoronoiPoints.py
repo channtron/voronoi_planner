@@ -67,9 +67,9 @@ def voronoi(path):
 
     # print(p_voronoi)
 
-    # image = np.flipud(map)
-    # plt.figure()
-    # plt.imshow(image, cmap=plt.get_cmap('binary'), interpolation="nearest")
+    image = np.flipud(map)
+    plt.figure()
+    plt.imshow(image, cmap=plt.get_cmap('binary'), interpolation="nearest")
 
     for point in p_voronoi:
         plt.plot(point[1], point[0], 'ro')

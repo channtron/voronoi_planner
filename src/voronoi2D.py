@@ -45,7 +45,7 @@ class Planner:
         self.pose = Pose()
 
         # Load map
-        self.map = np.genfromtxt('worlds/map2.csv', delimiter=',')
+        self.map = np.genfromtxt('worlds/map_coloreado.csv', delimiter=',')
         self.height = self.map.shape[0]
         self.width = self.map.shape[1]
         self.resolution = 1
@@ -73,7 +73,7 @@ class Planner:
 
         self.pose.theta = yaw
 
-    def compute_path(self, start_cell, goal_cell, heur):
+    def compute_path(self, start_cell, goal_cell, heur, diago):
         """Compute path."""
         path = []
 
@@ -152,9 +152,14 @@ class Planner:
                 # Calculamos celdas vecinas que pertenezcan a celdas de voronoi
                 celdas_vecinas=[]
                 for celdas in celdas_voronoi:
-                    if abs(celdas.x - celda_actual.x) <= 1 and abs(celdas.y - celda_actual.y) <= 1:
-                        celda_aux_2 = celda(celdas.x, celdas.y, start_cell, goal_cell, celda_actual, heur)
-                        celdas_vecinas.append(copy.deepcopy(celda_aux_2))
+                    if diago == 1:
+                        if abs(celdas.x - celda_actual.x) <= 1 and abs(celdas.y - celda_actual.y) <= 1:
+                            celda_aux_2 = celda(celdas.x, celdas.y, start_cell, goal_cell, celda_actual, heur)
+                            celdas_vecinas.append(copy.deepcopy(celda_aux_2))
+                    else:
+                        if (abs(celdas.x - celda_actual.x) <= 1 and abs(celdas.y - celda_actual.y) <= 0) or (abs(celdas.x - celda_actual.x) <= 0 and abs(celdas.y - celda_actual.y) <= 1):
+                            celda_aux_2 = celda(celdas.x, celdas.y, start_cell, goal_cell, celda_actual, heur)
+                            celdas_vecinas.append(copy.deepcopy(celda_aux_2))
 
                 # path.append([celda_actual.x, celda_actual.y])
 
@@ -227,6 +232,7 @@ class Planner:
         goal_pose_x = int(input("Set your x goal: "))
         goal_pose_y = int(input("Set your y goal: "))
         tolerance = input("Set the tolerance: ")
+        diago = int(input(" 0 = solo angulos rectos \n 1 = movimientos en diagonal \n Introduce 0 o 1:"))
         heur = int(input(" 0 = distancia Manhattan \n 1 = distancia Euclidea \n Introduce 0 o 1:"))
 
         # Compute current and goal cell
@@ -234,16 +240,16 @@ class Planner:
 
         """ La transformacion a metros es X + 10 / 8 - Y	"""
 
-        current_cell = [8.5 - self.pose.y, self.pose.x + 10]
-        goal_cell = [8.5 - goal_pose_y, goal_pose_x + 10]
+        current_cell = [7.5 - self.pose.y, self.pose.x + 9]
+        goal_cell = [7.5 - goal_pose_y, goal_pose_x + 9]
 
-        path = self.compute_path(current_cell, goal_cell, heur)
+        path = self.compute_path(current_cell, goal_cell, heur, diago)
 
         for point in path:
             # TODO: Call service GoTo
             """rospy.wait_for_service('goto')"""
             fn = rospy.ServiceProxy('goto', GoTo)
-            answ = fn(point[0] - 9.5, 8 - point[1],  tolerance)  # Rehacemos el cambio de coordenadas
+            answ = fn(point[0] - 9.5, 7.5 - point[1],  tolerance)  # Rehacemos el cambio de coordenadas
             pass
 
 

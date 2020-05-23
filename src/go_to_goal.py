@@ -32,8 +32,12 @@ class Robot:
         """Callback function which is called when a new message of type Pose is
         received by the subscriber."""
         
-        self.pose.x = round(data.pose.pose.position.x-7.5, 4)
-        self.pose.y = round(data.pose.pose.position.y-4.5, 4)
+        # mellodic
+        self.pose.x = round(data.pose.pose.position.x, 4)
+        self.pose.y = round(data.pose.pose.position.y, 4)
+        # kinetic
+        # self.pose.x = round(data.pose.pose.position.x-7.5, 4)
+        # self.pose.y = round(data.pose.pose.position.y-4.5, 4)
 	    # print('x: ' + str(self.pose.x) + ' y: ' + str(self.pose.y))
         
         orientation = [data.pose.pose.orientation.x, data.pose.pose.orientation.y, data.pose.pose.orientation.z, data.pose.pose.orientation.w]
