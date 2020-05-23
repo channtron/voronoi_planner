@@ -164,7 +164,7 @@ class Planner:
                             for x in range(0, int(dist_x), sign_x):
                                 for y in range(0, int(dist_y), sign_y):
                                     if self.map[
-                                        (celda_actual.z + z), (celda_actual.y + y), (celda_actual.x + x)] == 1.0:
+                                        int(celda_actual.z + z), int(celda_actual.y + y), int(celda_actual.x + x)] == 1.0:
                                         atraviesa_pared = 1
 
                         if atraviesa_pared == 0:

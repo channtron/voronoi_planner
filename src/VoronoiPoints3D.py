@@ -7,18 +7,18 @@ import copy
 
 def GenerateMap():
     # Cargamos los mapas de las distintas alturas
-    suelo = np.genfromtxt('/home/martalopez/catkin_ws/src/voronoi_planner/worlds/Plano/suelo + techo.csv', delimiter=',')
+    suelo = np.genfromtxt('worlds/Plano/suelo + techo.csv', delimiter=',')
     M = suelo.shape[0]
     N = suelo.shape[1]
     image_suelo = np.flipud(suelo)
 
-    alt1 = np.genfromtxt('/home/martalopez/catkin_ws/src/voronoi_planner/worlds/Plano/Altura1.csv', delimiter=',')
+    alt1 = np.genfromtxt('worlds/Plano/Altura1.csv', delimiter=',')
     image_alt1 = np.flipud(alt1)
 
-    alt3 = np.genfromtxt('/home/martalopez/catkin_ws/src/voronoi_planner/worlds/Plano/Altura3.csv', delimiter=',')
+    alt3 = np.genfromtxt('worlds/Plano/Altura3.csv', delimiter=',')
     image_alt3 = np.flipud(alt3)
 
-    alt4_5 = np.genfromtxt('/home/martalopez/catkin_ws/src/voronoi_planner/worlds/Plano/Altura4,5.csv', delimiter=',')
+    alt4_5 = np.genfromtxt('worlds/Plano/Altura4,5.csv', delimiter=',')
     image_alt4_5 = np.flipud(alt4_5)
 
     Z=11
