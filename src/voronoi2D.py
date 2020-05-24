@@ -50,12 +50,6 @@ class Planner:
         self.width = self.map.shape[1]
         self.resolution = 1
 
-        # Print map
-        # image = np.flipud(self.map)
-        # plt.figure()
-        # plt.imshow(image, cmap=plt.get_cmap('binary'), interpolation="nearest")
-        # plt.show()
-
     def update_pose(self, data):
         """Callback function which is called when a new message of type Pose is
         received by the subscriber."""
@@ -88,9 +82,6 @@ class Planner:
 
         # objeto = celda(x, y, start_cell, goal_cell, parent)
         inicio = celda(start_cell[1], start_cell[0], start_cell, goal_cell, None, heur)
-
-        # Anadimos la celda origen a la lista abierta
-        # lista_abierta.append(inicio)
 
         # Calculamos los puntos de voronoi
         voronoi_points = VoronoiPoints.voronoi('worlds/map_coloreado.csv')
@@ -127,8 +118,6 @@ class Planner:
             celda_actual = lista_abierta.pop(0)
             lista_cerrada.append(copy.deepcopy(celda_actual))
 
-            # path.append([celda_actual.x, celda_actual.y])
-
             # Comprobamos si hemos llegado al final:
             # Si es el final recorremos la cadena de padres hasta el origen
             if celda_actual.x == celda_v_final.x and celda_actual.y == celda_v_final.y:
@@ -146,7 +135,6 @@ class Planner:
                 fin = True
                 break
 
-
             # Si no es el final calculamos las celdas vecinas, comprobamos si esta en la lista o hay obstaculo y repetimos el bucle
             else:
                 # Calculamos celdas vecinas que pertenezcan a celdas de voronoi
@@ -160,8 +148,6 @@ class Planner:
                         if (abs(celdas.x - celda_actual.x) <= 1 and abs(celdas.y - celda_actual.y) <= 0) or (abs(celdas.x - celda_actual.x) <= 0 and abs(celdas.y - celda_actual.y) <= 1):
                             celda_aux_2 = celda(celdas.x, celdas.y, start_cell, goal_cell, celda_actual, heur)
                             celdas_vecinas.append(copy.deepcopy(celda_aux_2))
-
-                # path.append([celda_actual.x, celda_actual.y])
 
                 iteraciones = iteraciones + 1
 
@@ -197,10 +183,6 @@ class Planner:
                 print("No se ha encontrado un camino, algo ha fallado :(")
                 print("Se las siguientes iteraciones...", iteraciones)
                 fin = True
-            # En caso de fallo, no hace infinitas iteraciones
-            # if iteraciones > 100:
-            #     print("Mas de 100 iteraciones, algo ha fallado :(")
-            #     fin = True
 
         ######################
         # End A*             #
@@ -235,8 +217,6 @@ class Planner:
         diago = int(input(" 0 = solo angulos rectos \n 1 = movimientos en diagonal \n Introduce 0 o 1:"))
         heur = int(input(" 0 = distancia Manhattan \n 1 = distancia Euclidea \n Introduce 0 o 1:"))
 
-        # Compute current and goal cell
-        # TODO: compute automatically
 
         """ La transformacion a metros es X + 10 / 8 - Y	"""
 
@@ -245,8 +225,7 @@ class Planner:
 
         path = self.compute_path(current_cell, goal_cell, heur, diago)
 
-        for point in path:
-            # TODO: Call service GoTo
+        for point in path
             """rospy.wait_for_service('goto')"""
             fn = rospy.ServiceProxy('goto', GoTo)
             answ = fn(point[0] - 9.5, 7.5 - point[1],  tolerance)  # Rehacemos el cambio de coordenadas

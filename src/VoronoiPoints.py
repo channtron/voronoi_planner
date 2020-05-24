@@ -17,12 +17,6 @@ def voronoi(path):
     M = map_amp.shape[0]
     N = map_amp.shape[1]
 
-    # print(map_amp)
-    # image = np.flipud(map_amp)
-    # plt.figure()
-    # plt.imshow(image, cmap=plt.get_cmap('binary'), interpolation="nearest")
-    # plt.show()
-
     w_map = copy.deepcopy(map_amp)
     n_map = copy.deepcopy(map_amp)
     p_voronoi = []
@@ -50,22 +44,13 @@ def voronoi(path):
                         n_map[i,j] = 1
                         p_voronoi.append([i* Y/M, j* X/N]) # [i, j] - Y/2 - X/2
                         break
-
-    # image = np.flipud(n_map)
-    # plt.figure()
-    # plt.imshow(image, cmap=plt.get_cmap('binary'), interpolation="nearest")
-    # plt.show()
-
     
-    # print(len(p_voronoi))
+    # elimina los puntos repetidos tras comprimir el mapa
     pvoronoi=[]
     for punto in p_voronoi:
         if punto not in pvoronoi:
             pvoronoi.append(punto)
     p_voronoi = pvoronoi
-    # print(len(p_voronoi))
-
-    # print(p_voronoi)
 
     image = np.flipud(map)
     plt.figure()
